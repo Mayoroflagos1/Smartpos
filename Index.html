@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartPOS Premium</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Poppins:wght@600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,sans-serif;background:#f4f5f7;color:#222}
+h1,h2,h3{font-family:Poppins,sans-serif}
+.app{display:flex;min-height:100vh}
+.sidebar{width:225px;background:#15191f;color:#fff;padding:22px 14px;flex-shrink:0}
+.logo-area{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.logo-icon{width:38px;height:38px;border-radius:10px;background:#c49a50;color:#15191f;display:grid;place-items:center;font-weight:bold;font-size:21px}
+.logo{color:#e0b86c;font-size:21px}
+.sidebar p{color:#999;font-size:10px;letter-spacing:1px;margin:8px 0 25px}
+.sidebar button{display:block;width:100%;padding:12px;margin:5px 0;background:transparent;border:0;color:#ccc;text-align:left;border-radius:7px;font-size:13px;cursor:pointer}
+.sidebar button.active,.sidebar button:hover{background:#34302a;color:#e0b86c}
+.main{flex:1;min-width:0;padding:24px}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;gap:10px}
+.topbar h2{font-size:22px}
+.badge{background:#15191f;color:#e0b86c;padding:9px 14px;border-radius:20px;font-size:12px}
+.welcome{margin-bottom:22px}
+.welcome p,.muted{color:#777;font-size:13px;margin-top:6px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:15px 0 22px}
+.card,.section{background:#fff;padding:19px;border-radius:12px;box-shadow:0 2px 10px #00000008;margin-bottom:18px}
+.card p{color:#777;font-size:12px;margin-bottom:10px}
+.card h2{font-size:22px;overflow-wrap:anywhere}
+.card span{color:#b38b44;font-size:11px}
+.section h3{font-size:16px;margin-bottom:15px}
+.section p{line-height:1.5}
+.field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px}
+label{font-size:12px;font-weight:500}
+input,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:7px;margin:7px 0 13px;font:14px Inter;background:#fff;outline:none}
+input:focus,select:focus{border-color:#c49a50}
+button{font-family:Inter;cursor:pointer}
+.gold-btn,.dark-btn,.red-btn,.small-btn{border:0;padding:11px 15px;border-radius:7px;margin:3px;font-size:12px}
+.gold-btn{background:#c49a50;color:white}
+.gold-btn:hover{background:#a9823f}
+.dark-btn{background:#15191f;color:#e0b86c}
+.red-btn{background:#fee2e2;color:#b91c1c}
+.small-btn{background:#e8f0fe;color:#2455a4;padding:8px 10px}
+table{width:100%;border-collapse:collapse;min-width:570px}
+th,td{padding:12px 9px;border-bottom:1px solid #eee;text-align:left;font-size:12px}
+th{color:#888;font-weight:500}
+.table-wrap{overflow-x:auto}
+.low{color:#dc2626;font-weight:bold}
+.profit{color:#16834b;font-weight:bold}
+.empty{color:#888;font-size:13px;padding:12px 0}
+.report-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
+.report-tabs button{border:1px solid #ddd;background:#fff;padding:9px 14px;border-radius:7px;font-size:12px}
+.report-tabs button.active{background:#15191f;color:#e0b86c}
+.notice{background:#fff8e9;color:#795c25;padding:12px;border-radius:8px;font-size:12px;margin:10px 0}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1}
+.status{font-size:12px;color:#16834b;margin-top:8px}
+.scanner-box{display:none;padding:12px;background:#15191f;border-radius:10px;margin:10px 0}
+.scanner-box video{width:100%;max-height:260px;object-fit:cover}
+.pill{display:inline-block;padding:5px 8px;border-radius:20px;background:#f4f4f4;font-size:11px}
+.receipt-overlay,.modal-overlay{position:fixed;inset:0;background:#000b;z-index:9999;overflow:auto;padding:18px;display:flex;justify-content:center;align-items:flex-start}
+.receipt-box,.modal-box{background:#fff;color:#222;width:100%;max-width:470px;padding:23px;border-radius:10px;margin:auto}
+.receipt-logo{text-align:center;color:#c49a50;font-size:23px;font-weight:bold}
+.receipt-box h2{text-align:center;margin:5px 0}
+.receipt-box hr{border:0;border-top:1px dashed #aaa;margin:13px 0}
+.receipt-table{min-width:0;width:100%;margin:12px 0}
+.receipt-table th,.receipt-table td{font-size:10px;padding:8px 3px}
+.receipt-actions{display:flex;gap:8px;margin-top:18px}
+.receipt-actions button{flex:1}
+.hidden{display:none!important}
+@media(max-width:760px){
+.sidebar{width:76px;padding:12px 6px}
+.logo-area{justify-content:center}
+.logo{display:none}
+.logo-icon{width:34px;height:34px}
+.sidebar p{display:none}
+.sidebar button{font-size:10px;text-align:center;padding:11px 2px}
+.main{padding:13px}
+.stats{grid-template-columns:1fr}
+.field-grid{grid-template-columns:1fr}
+.topbar h2{font-size:18px}
+.section{padding:15px}
+}
+@media print{
+body *{visibility:hidden!important}
+.receipt-overlay,.receipt-overlay *{visibility:visible!important}
+.receipt-overlay{position:absolute;inset:0;background:#fff;padding:0;display:block}
+.receipt-box{max-width:100%;border-radius:0}
+.receipt-actions{display:none!important}
+}
+.login-overlay{position:fixed;inset:0;background:#15191f;z-index:10000;display:flex;align-items:center;justify-content:center;padding:18px}
+.login-card{background:#fff;width:100%;max-width:390px;padding:26px;border-radius:14px}
+.login-card h2{text-align:center;margin:10px 0}
+.login-card .logo-icon{margin:auto}
+.user-chip{font-size:12px;color:#e0b86c;background:#34302a;padding:8px 11px;border-radius:20px}
+.activity-item{padding:10px 0;border-bottom:1px solid #eee;font-size:12px}
+</style>
+</head>
+<body>
+
+<div id="loginOverlay" class="login-overlay">
+<div class="login-card">
+<div class="logo-icon">S</div>
+<h2>SmartPOS Login</h2>
+<p class="muted" style="text-align:center;margin-bottom:18px">Sign in to continue</p>
+<form onsubmit="login(event)">
+<label>Username</label>
+<input id="loginUsername" autocomplete="username" required value="admin">
+<label>Password</label>
+<input id="loginPassword" type="password" autocomplete="current-password" required>
+<button class="gold-btn" style="width:100%;margin:8px 0">Sign In</button>
+<p id="loginError" class="low" style="font-size:12px"></p>
+</form>
+<div class="notice">First login: username <b>admin</b>, password <b>1234</b>. Change this password immediately.</div>
+</div>
+</div>
+
+<div class="app">
+<aside class="sidebar">
+<div class="logo-area"><div class="logo-icon">S</div><h2 class="logo">SmartPOS</h2></div>
+<p>PREMIUM BUSINESS SYSTEM</p>
+<button class="active" onclick="showPage('dashboard',this)">Dashboard</button>
+<button onclick="showPage('products',this)">Products</button>
+<button onclick="showPage('inventory',this)">Inventory</button>
+<button onclick="showPage('sales',this)">Sales / Checkout</button>
+<button onclick="showPage('history',this)">Sales History</button>
+<button onclick="showPage('reports',this)">Reports</button>
+<button onclick="showPage('customers',this)">Customers</button>
+<button onclick="showPage('expenses',this)">Expenses</button>
+<button onclick="showPage('employees',this)">Employees</button>
+<button onclick="showPage('settings',this)">Settings</button>
+<button onclick="logout()">Log Out</button>
+</aside>
+
+<main class="main">
+<div class="topbar">
+<h2 id="pageTitle">Dashboard</h2>
+<div class="row" style="justify-content:flex-end;flex:0 1 auto">
+<span id="userChip" class="user-chip">Signed out</span>
+<div class="badge" id="connectionBadge">OFFLINE READY</div>
+</div>
+</div>
+<div id="content"></div>
+</main>
+</div>
+
+<script>
+"use strict";
+
+const KEYS={
+users:"smartpos_users",
+activity:"smartpos_activity",
+products:"smartpos_products",
+sales:"smartpos_sales",
+customers:"smartpos_customers",
+expenses:"smartpos_expenses",
+settings:"smartpos_settings"
+};
+
+function read(key,fallback){
+try{return JSON.parse(localStorage.getItem(key))||fallback}
+catch(e){return fallback}
+}
+
+let users=read(KEYS.users,[{
+id:1,name:"Administrator",username:"admin",
+password:"1234",role:"Admin",active:true
+}]);
+
+let activity=read(KEYS.activity,[]);
+let currentUser=null;
+let products=read(KEYS.products,[]);
+let sales=read(KEYS.sales,[]);
+let customers=read(KEYS.customers,[]);
+let expenses=read(KEYS.expenses,[]);
+let settings=read(KEYS.settings,{vatRate:7.5,vatEnabled:false});
+let cart=[];
+let reportPeriod="daily";
+let scannerStream=null;
+
+function saveData(){
+localStorage.setItem(KEYS.users,JSON.stringify(users));
+localStorage.setItem(KEYS.activity,JSON.stringify(activity));
+localStorage.setItem(KEYS.products,JSON.stringify(products));
+localStorage.setItem(KEYS.sales,JSON.stringify(sales));
+localStorage.setItem(KEYS.customers,JSON.stringify(customers));
+localStorage.setItem(KEYS.expenses,JSON.stringify(expenses));
+localStorage.setItem(KEYS.settings,JSON.stringify(settings));
+}
+
+function money(v){
+return "₦"+Number(v||0).toLocaleString("en-NG",{maximumFractionDigits:2});
+}
+
+function esc(v){
+return String(v??"").replace(/[&<>"']/g,c=>({
+"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}[c]));
+}
+
+function uid(){
+return Date.now()+Math.floor(Math.random()*1000);
+}
+
+function getSaleDate(s){
+let d=s.timestamp?new Date(s.timestamp):new Date(s.date);
+return isNaN(d)?new Date(0):d;
+}
+
+function sameDay(a,b){
+return a.getFullYear()===b.getFullYear()&&
+a.getMonth()===b.getMonth()&&
+a.getDate()===b.getDate();
+}
+
+function periodSales(period){
+let now=new Date();
+return sales.filter(s=>{
+let d=getSaleDate(s);
+if(period==="daily")return sameDay(d,now);
+if(period==="monthly")return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth();
+let start=new Date(now);
+start.setHours(0,0,0,0);
+start.setDate(start.getDate()-((start.getDay()+6)%7));
+let end=new Date(start);
+end.setDate(end.getDate()+7);
+return d>=start&&d<end;
+});
+}
+
+function saleProfit(s){
+let total=0,known=true;
+(s.items||[]).forEach(i=>{
+if(i.costPrice==null||!Number.isFinite(Number(i.costPrice)))known=false;
+else total+=(Number(i.price)-Number(i.costPrice))*Number(i.quantity);
+});
+return{profit:total,known};
+}
+
+const PAGE_ROLES={
+dashboard:["Admin","Manager","Cashier"],
+products:["Admin","Manager"],
+inventory:["Admin","Manager","Cashier"],
+sales:["Admin","Manager","Cashier"],
+history:["Admin","Manager","Cashier"],
+reports:["Admin","Manager"],
+customers:["Admin","Manager","Cashier"],
+expenses:["Admin","Manager"],
+employees:["Admin"],
+settings:["Admin"]
+};
+
+function showPage(page,btn){
+if(!currentUser){renderLogin();return}
+if(!(PAGE_ROLES[page]||[]).includes(currentUser.role)){
+alert("Your account does not have permission to open this page.");
+return;
+}
+document.getElementById("pageTitle").textContent=
+page==="sales"?"Sales / Checkout":page.charAt(0).toUpperCase()+page.slice(1);
+
+document.querySelectorAll(".sidebar button").forEach(b=>b.classList.remove("active"));
+if(btn)btn.classList.add("active");
+else{
+let b=[...document.querySelectorAll(".sidebar button")]
+.find(x=>x.textContent.toLowerCase().startsWith(page));
+if(b)b.classList.add("active");
+}
+
+({
+dashboard,products:productPage,inventory:inventoryPage,
+sales:salesPage,history:historyPage,reports:reportsPage,
+customers:customersPage,expenses:expensesPage,
+employees:employeesPage,settings:settingsPage
+}[page]||dashboard)();
+}
+
+function setContent(s){
+document.getElementById("content").innerHTML=s;
+}
+
+function dashboard(){
+let stock=products.reduce((a,p)=>a+Number(p.quantity||0),0);
+let revenue=sales.filter(s=>!s.refunded).reduce((a,s)=>a+Number(s.total||0),0);
+let today=periodSales("daily");
+let todayRevenue=today.filter(s=>!s.refunded).reduce((a,s)=>a+Number(s.total||0),0);
+let low=products.filter(p=>Number(p.quantity)<=5).length;
+
+setContent(`
+<div class="welcome">
+<h2>Welcome to SmartPOS</h2>
+<p>Run your sales and manage your business.</p>
+</div>
+<div class="stats">
+<div class="card"><p>Total Products</p><h2>${products.length}</h2><span>Registered products</span></div>
+<div class="card"><p>Total Stock</p><h2>${stock}</h2><span>Available units</span></div>
+<div class="card"><p>Inventory Value</p><h2>${money(products.reduce((a,p)=>a+Number(p.price)*Number(p.quantity),0))}</h2><span>At selling price</span></div>
+<div class="card"><p>Total Revenue</p><h2>${money(revenue)}</h2><span>Excludes refunded sales</span></div>
+<div class="card"><p>Transactions</p><h2>${sales.length}</h2><span>Recorded transactions</span></div>
+<div class="card"><p>Low Stock</p><h2>${low}</h2><span>Products needing attention</span></div>
+</div>
+<div class="section">
+<h3>Today's Performance</h3>
+<div class="stats">
+<div class="card"><p>Today's Revenue</p><h2>${money(todayRevenue)}</h2></div>
+<div class="card"><p>Transactions</p><h2>${today.length}</h2></div>
+<div class="card"><p>Profit</p><h2>${today.every(s=>saleProfit(s).known)?money(today.reduce((a,s)=>a+saleProfit(s).profit,0)):"Incomplete"}</h2></div>
+</div>
+<button class="gold-btn" onclick="showPage('sales')">Start a Sale</button>
+</div>
+<div class="section">
+<h3>Stock Alerts</h3>
+${products.filter(p=>Number(p.quantity)<=5).map(p=>`<p style="padding:9px;border-bottom:1px solid #eee">${esc(p.name)} — <b class="low">${p.quantity} left</b></p>`).join("")||'<p class="empty">No low-stock products.</p>'}
+</div>
+<div class="section">
+<h3>Expiry Alerts</h3>
+${expiryAlerts().map(p=>`<p style="padding:8px;border-bottom:1px solid #eee">${esc(p.name)} — <b class="${p.days<0?'low':'profit'}">${p.days<0?'Expired':p.days===0?'Expires today':'Expires in '+p.days+' days'}</b></p>`).join('')||'<p class="empty">No products close to expiry.</p>'}
+</div>
+<div class="section">
+<h3>Expenses Summary</h3>
+<h2>${money(expenses.reduce((a,x)=>a+Number(x.amount||0),0))}</h2>
+<p class="muted">All recorded business expenses</p>
+<button class="dark-btn" onclick="showPage('expenses')">Manage Expenses</button>
+</div>
+`);
+}
+
+function productPage(){
+setContent(`
+<div class="section">
+<h3>Add Product</h3>
+<form onsubmit="addProduct(event)">
+<div class="field-grid">
+<div><label>Product name</label><input id="pName" required></div>
+<div><label>Barcode (optional)</label><input id="pBarcode"></div>
+<div><label>Cost price (₦)</label><input id="pCost" type="number" min="0" step=".01" required></div>
+<div><label>Selling price (₦)</label><input id="pPrice" type="number" min=".01" step=".01" required></div>
+<div><label>Opening stock</label><input id="pQty" type="number" min="0" step="1" required></div>
+<div><label>Low-stock level</label><input id="pLow" type="number" min="0" step="1" value="5"></div>
+<div><label>Expiry date (optional)</label><input id="pExpiry" type="date"></div>
+<div><label>Supplier (optional)</label><input id="pSupplier" placeholder="Supplier name"></div>
+</div>
+<button class="gold-btn">Add Product</button>
+</form>
+</div>
+<div class="section"><h3>Products</h3><div id="productTable" class="table-wrap"></div></div>
+`);
+displayProducts();
+}
+
+function addProduct(e){
+e.preventDefault();
+let name=pName.value.trim();
+let cost=Number(pCost.value);
+let price=Number(pPrice.value);
+let qty=Number(pQty.value);
+let barcode=pBarcode.value.trim();
+let expiry=pExpiry.value;
+let supplier=pSupplier.value.trim();
+
+if(!name||cost<0||price<=0||!Number.isInteger(qty)||qty<0){
+alert("Check the product details.");return;
+}
+if(barcode&&products.some(p=>p.barcode===barcode)){
+alert("That barcode is already assigned to another product.");return;
+}
+products.push({
+id:uid(),name,costPrice:cost,price,quantity:qty,
+barcode,lowStock:Number(pLow.value)||5,expiry,supplier
+});
+saveData();
+logActivity("Added product: "+name);
+productPage();
+alert("Product saved.");
+}
+
+function displayProducts(){
+let el=document.getElementById("productTable");
+if(!el)return;
+el.innerHTML=products.length?`
+<table>
+<tr><th>Product</th><th>Barcode</th><th>Cost</th><th>Price</th><th>Stock</th><th>Expiry</th><th>Supplier</th><th>Action</th></tr>
+${products.map(p=>`
+<tr>
+<td>${esc(p.name)}</td><td>${esc(p.barcode||"—")}</td>
+<td>${p.costPrice==null?"Unknown":money(p.costPrice)}</td>
+<td>${money(p.price)}</td>
+<td class="${p.quantity<=Number(p.lowStock||5)?"low":""}">${p.quantity}</td>
+<td>${esc(p.expiry||"—")}</td><td>${esc(p.supplier||"—")}</td>
+<td><button class="small-btn" onclick="editStock(${p.id})">Stock</button> <button class="red-btn" onclick="deleteProduct(${p.id})">Delete</button></td>
+</tr>`).join("")}
+</table>`:'<p class="empty">No products yet.</p>';
+}
+
+function editStock(id){
+let p=products.find(x=>x.id===id);
+if(!p)return;
+let q=prompt("Enter the new stock quantity for "+p.name,p.quantity);
+if(q===null)return;
+if(!Number.isInteger(Number(q))||Number(q)<0){
+alert("Enter a whole number of 0 or more.");return;
+}
+p.quantity=Number(q);
+saveData();
+logActivity("Updated stock for "+p.name);
+productPage();
+}
+
+function deleteProduct(id){
+if(confirm("Delete this product? Existing sales history will remain.")){
+products=products.filter(p=>p.id!==id);
+saveData();
+logActivity("Deleted a product");
+productPage();
+}
+}
+
+function inventoryPage(){
+setContent(`
+<div class="section">
+<h3>Inventory Management</h3>
+<p class="muted">Stock reduces automatically after a completed sale. Use Restock to record new stock.</p>
+<div class="table-wrap">
+<table>
+<tr><th>Product</th><th>Available</th><th>Alert level</th><th>Status</th><th>Expiry</th><th>Action</th></tr>
+${products.map(p=>`
+<tr>
+<td>${esc(p.name)}</td><td>${p.quantity}</td><td>${p.lowStock??5}</td>
+<td class="${p.quantity<=0?"low":p.quantity<=Number(p.lowStock??5)?"low":"profit"}">${p.quantity<=0?"Out of stock":p.quantity<=Number(p.lowStock??5)?"Low stock":"In stock"}</td>
+<td>${esc(p.expiry||"—")}</td>
+<td><button class="gold-btn" onclick="restock(${p.id})">Restock</button></td>
+</tr>`).join("")}
+</table>
+</div>
+</div>
+`);
+}
+
+function restock(id){
+let p=products.find(x=>x.id===id);
+if(!p)return;
+let n=prompt("How many units are being added?","1");
+if(n===null)return;
+if(!Number.isInteger(Number(n))||Number(n)<=0){
+alert("Enter a whole number above zero.");return;
+}
+p.quantity+=Number(n);
+saveData();
+logActivity("Restocked "+p.name+" by "+n);
+inventoryPage();
+}
+
+function salesPage(){
+setContent(`
+<div class="section">
+<h3>Fast Checkout</h3>
+<label>Scan or enter barcode / product name</label>
+<div class="row">
+<input id="quickFind" placeholder="Scan barcode or type product name" onkeydown="if(event.key==='Enter'){event.preventDefault();quickAdd()}">
+<button class="gold-btn" style="flex:0 0 auto" onclick="quickAdd()">Add</button>
+</div>
+<div class="row">
+<button class="dark-btn" onclick="startScanner()">Scan with Camera</button>
+<button class="small-btn" onclick="stopScanner()">Stop Scanner</button>
+</div>
+<div id="scannerBox" class="scanner-box">
+<video id="scannerVideo" playsinline></video>
+<p style="color:white;font-size:12px">Point your camera at a product barcode. Camera access requires browser permission and support.</p>
+</div>
+<label>Or select product</label>
+<select id="saleProduct">
+<option value="">Choose product</option>
+${products.filter(p=>p.quantity>0).map(p=>`<option value="${p.id}">${esc(p.name)} — ${money(p.price)} (${p.quantity} left)</option>`).join("")}
+</select>
+<div class="row">
+<div><label>Quantity</label><input id="saleQuantity" type="number" min="1" step="1" value="1"></div>
+<div style="align-self:end"><button class="gold-btn" onclick="addSelected()">Add to Cart</button></div>
+</div>
+</div>
+<div class="section">
+<h3>Cart & Payment</h3>
+<div id="cartList"></div>
+<div class="field-grid">
+<div><label>Discount type</label><select id="discountType" onchange="displayCart()"><option value="none">No discount</option><option value="amount">Fixed amount (₦)</option><option value="percent">Percentage (%)</option></select></div>
+<div><label>Discount value</label><input id="discountValue" type="number" min="0" step=".01" value="0" oninput="displayCart()"></div>
+<div><label>Payment method</label><select id="paymentMethod"><option>Cash</option><option>Bank Transfer</option><option>POS / Card</option><option>USSD</option><option>QR Payment</option><option>Credit</option></select></div>
+<div><label>Customer name (optional)</label><input id="customerName" placeholder="Customer name"></div>
+<div><label>Amount received (₦)</label><input id="cashReceived" type="number" min="0" step=".01" placeholder="For cash payments"></div>
+<div><label>Customer phone (optional)</label><input id="customerPhone" type="tel" placeholder="WhatsApp number"></div>
+</div>
+<h3 id="cartTotal">Total: ₦0</h3>
+<p id="paymentHint" class="muted">For cash, enter the amount received. For transfer/card, confirm payment before completing the sale.</p>
+<button class="gold-btn" onclick="completeSale()">Complete Sale</button>
+<button class="dark-btn" onclick="clearCart()">Clear Cart</button>
+<p id="checkoutStatus" class="status"></p>
+</div>
+`);
+displayCart();
+}
+
+function addItem(p,qty){
+if(!p||!Number.isInteger(qty)||qty<1){
+alert("Select a product and enter a valid quantity.");return;
+}
+let found=cart.find(x=>x.id===p.id);
+let already=found?found.quantity:0;
+if(qty+already>Number(p.quantity)){
+alert("Not enough stock available.");return;
+}
+if(found)found.quantity+=qty;
+else cart.push({id:p.id,name:p.name,price:Number(p.price),costPrice:p.costPrice??null,quantity:qty});
+displayCart();
+}
+
+function addSelected(){
+let id=Number(document.getElementById("saleProduct").value);
+let p=products.find(x=>x.id===id);
+addItem(p,Number(document.getElementById("saleQuantity").value));
+}
+
+function quickAdd(){
+let input=document.getElementById("quickFind");
+let v=input.value.trim().toLowerCase();
+if(!v)return;
+let p=products.find(x=>String(x.barcode||"").toLowerCase()===v)||products.find(x=>x.name.toLowerCase()===v);
+if(!p){alert("Product not found. Add it in Products first.");return}
+addItem(p,1);
+input.value="";
+input.focus();
+}
+
+function cartAmounts(){
+let subtotal=cart.reduce((a,i)=>a+i.price*i.quantity,0);
+let type=document.getElementById("discountType")?.value||"none";
+let v=Number(document.getElementById("discountValue")?.value||0);
+let discount=type==="percent"?subtotal*Math.min(v,100)/100:type==="amount"?Math.min(v,subtotal):0;
+let taxable=Math.max(0,subtotal-discount);
+let vat=settings.vatEnabled?taxable*Number(settings.vatRate||0)/100:0;
+return{subtotal,discount,vat,total:taxable+vat};
+}
+
+function displayCart(){
+let el=document.getElementById("cartList");
+if(!el)return;
+if(!cart.length)el.innerHTML='<p class="empty">Your cart is empty.</p>';
+else el.innerHTML=cart.map(i=>`
+<div style="padding:11px 0;border-bottom:1px solid #eee">
+<b>${esc(i.name)}</b>
+<p class="muted">${money(i.price)} × ${i.quantity} = ${money(i.price*i.quantity)}</p>
+<button class="small-btn" onclick="changeCartQty(${i.id},-1)">−</button>
+<button class="small-btn" onclick="changeCartQty(${i.id},1)">+</button>
+<button class="red-btn" onclick="removeCart(${i.id})">Remove</button>
+</div>`).join("");
+let a=cartAmounts();
+let total=document.getElementById("cartTotal");
+if(total)total.textContent=`Subtotal: ${money(a.subtotal)} | Discount: ${money(a.discount)} | VAT: ${money(a.vat)} | Total: ${money(a.total)}`;
+}
+
+function changeCartQty(id,delta){
+let i=cart.find(x=>x.id===id),p=products.find(x=>x.id===id);
+if(!i||!p)return;
+let next=i.quantity+delta;
+if(next<=0){removeCart(id);return}
+if(next>p.quantity){alert("Not enough stock.");return}
+i.quantity=next;
+displayCart();
+}
+
+function removeCart(id){
+cart=cart.filter(i=>i.id!==id);
+displayCart();
+}
+
+function clearCart(){
+cart=[];
+displayCart();
+}
+
+function completeSale(){
+if(!cart.length){alert("Cart is empty.");return}
+for(let i of cart){
+let p=products.find(x=>x.id===i.id);
+if(!p||p.quantity<i.quantity){alert("Stock changed. Review the cart.");return}
+}
+let a=cartAmounts();
+let method=document.getElementById("paymentMethod").value;
+let receivedInput=document.getElementById("cashReceived").value;
+let received=method==="Cash"?Number(receivedInput):a.total;
+
+if(method==="Cash"&&(receivedInput===""||received<a.total)){
+alert("Cash received must be at least the total.");return;
+}
+if(method==="Credit"&&!document.getElementById("customerName").value.trim()){
+alert("Enter the customer name for a credit sale.");return;
+}
+if(method!=="Cash"&&method!=="Credit"&&!confirm("Have you confirmed that the "+method+" payment was received?"))return;
+
+let sale={
+id:uid(),date:new Date().toLocaleString(),timestamp:new Date().toISOString(),
+items:cart.map(i=>({...i})),subtotal:a.subtotal,discount:a.discount,
+vat:a.vat||0,vatRate:settings.vatEnabled?Number(settings.vatRate||0):0,
+total:a.total,received,change:Math.max(0,received-a.total),
+paymentMethod:method,
+customerName:document.getElementById("customerName").value.trim(),
+customerPhone:document.getElementById("customerPhone").value.trim(),
+refunded:false,offline:!navigator.onLine
+};
+
+cart.forEach(i=>{
+let p=products.find(x=>x.id===i.id);
+p.quantity-=i.quantity;
+});
+sales.push(sale);
+saveData();
+logActivity("Completed sale #"+sale.id+" for "+money(sale.total));
+cart=[];
+salesPage();
+printReceipt(sale);
+}
+
+function historyPage(){
+setContent(`
+<div class="section">
+<h3>Sales History</h3>
+<input id="historySearch" placeholder="Search by receipt number, customer or payment method" oninput="renderHistory()">
+<div id="historyList" class="table-wrap"></div>
+</div>`);
+renderHistory();
+}
+
+function renderHistory(){
+let el=document.getElementById("historyList");
+if(!el)return;
+let q=(document.getElementById("historySearch")?.value||"").toLowerCase();
+let list=sales.slice().reverse().filter(s=>[s.id,s.customerName,s.paymentMethod,s.date].join(" ").toLowerCase().includes(q));
+el.innerHTML=list.length?`
+<table>
+<tr><th>Receipt</th><th>Date</th><th>Customer</th><th>Payment</th><th>Total</th><th>Status</th><th>Action</th></tr>
+${list.map(s=>`
+<tr>
+<td>#${s.id}</td><td>${esc(s.date)}</td><td>${esc(s.customerName||"Walk-in")}</td>
+<td>${esc(s.paymentMethod||"Cash")}</td><td>${money(s.total)}</td>
+<td>${s.refunded?'<span class="low">Refunded</span>':'<span class="profit">Completed</span>'}</td>
+<td><button class="small-btn" onclick="printReceiptById(${s.id})">Receipt</button>${!s.refunded?`<button class="red-btn" onclick="refundSale(${s.id})">Refund</button>`:""}</td>
+</tr>`).join("")}
+</table>`:'<p class="empty">No matching sales found.</p>';
+}
+
+function refundSale(id){
+let s=sales.find(x=>x.id===id);
+if(!s||s.refunded)return;
+if(!confirm("Refund the full sale of "+money(s.total)+"? Stock quantities will be returned."))return;
+s.refunded=true;
+s.refundDate=new Date().toISOString();
+s.items.forEach(i=>{
+let p=products.find(x=>x.id===i.id);
+if(p)p.quantity+=Number(i.quantity);
+});
+saveData();
+logActivity("Refunded sale #"+id);
+renderHistory();
+alert("Sale refunded and stock restored.");
+}
+
+function printReceiptById(id){
+let s=sales.find(x=>x.id===id);
+if(s)printReceipt(s);
+}
+
+function printReceipt(s){
+document.getElementById("receiptOverlay")?.remove();
+let overlay=document.createElement("div");
+overlay.id="receiptOverlay";
+overlay.className="receipt-overlay";
+overlay.innerHTML=`
+<div class="receipt-box">
+<div class="receipt-logo">◆</div>
+<h2>SMARTPOS</h2>
+<p class="muted" style="text-align:center">Customer Sales Receipt</p>
+<hr>
+<p><b>Receipt:</b> ${s.id}</p>
+<p><b>Date:</b> ${esc(s.date)}</p>
+<p><b>Customer:</b> ${esc(s.customerName||"Walk-in")}</p>
+<p><b>Payment:</b> ${esc(s.paymentMethod||"Cash")}</p>
+<hr>
+<table class="receipt-table">
+<tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr>
+${s.items.map(i=>`<tr><td>${esc(i.name)}</td><td>${i.quantity}</td><td>${money(i.price)}</td><td>${money(i.price*i.quantity)}</td></tr>`).join("")}
+</table>
+<hr>
+<p>Subtotal: ${money(s.subtotal??s.total)}</p>
+<p>Discount: ${money(s.discount||0)}</p>
+<p>VAT (${Number(s.vatRate||0)}%): ${money(s.vat||0)}</p>
+<h3 style="margin:12px 0">Total: ${money(s.total)}</h3>
+<p>Paid: ${money(s.received)}</p>
+<p>Change: ${money(s.change)}</p>
+${s.refunded?'<p class="low">REFUNDED</p>':""}
+<hr>
+<p style="text-align:center;margin:15px 0">Thank you for shopping with us!</p>
+<div class="receipt-actions">
+<button class="gold-btn" onclick="window.print()">Print Receipt</button>
+<button class="dark-btn" onclick="shareReceipt(${s.id})">Share</button>
+<button class="red-btn" onclick="closeReceipt()">Close</button>
+</div>
+</div>`;
+document.body.appendChild(overlay);
+}
+
+function closeReceipt(){
+document.getElementById("receiptOverlay")?.remove();
+}
+
+async function shareReceipt(id){
+let s=sales.find(x=>x.id===id);
+if(!s)return;
+let text=`SMARTPOS RECEIPT
+Receipt: ${s.id}
+Date: ${s.date}
+Customer: ${s.customerName||"Walk-in"}
+Items:
+${s.items.map(i=>`${i.name} x${i.quantity} - ${money(i.price*i.quantity)}`).join("\n")}
+Discount: ${money(s.discount||0)}
+VAT: ${money(s.vat||0)}
+TOTAL: ${money(s.total)}
+Payment: ${s.paymentMethod||"Cash"}`;
+try{
+if(navigator.share)await navigator.share({title:"SmartPOS Receipt",text});
+else{
+await copyText(text);
+alert("Receipt copied. Paste it into WhatsApp or another app.");
+}
+}catch(e){
+if(e.name!=="AbortError"){
+await copyText(text);
+alert("Receipt copied to clipboard.");
+}
+}
+}
+
+function reportsPage(){
+setContent(`
+<div class="section">
+<h3>Business Performance</h3>
+<div class="report-tabs">
+<button id="dailyTab" onclick="changeReport('daily')">Daily</button>
+<button id="weeklyTab" onclick="changeReport('weekly')">Weekly</button>
+<button id="monthlyTab" onclick="changeReport('monthly')">Monthly</button>
+</div>
+<div id="reportContent"></div>
+</div>
+<div class="section">
+<h3>Export Report</h3>
+<p class="muted">Acode preview may not support direct CSV downloads. Share or copy the CSV instead.</p>
+<button class="gold-btn" onclick="exportCurrent()">Share / Copy Current Report</button>
+<button class="dark-btn" onclick="exportAll()">Share / Copy All Sales</button>
+</div>`);
+changeReport(reportPeriod);
+}
+
+function changeReport(period){
+reportPeriod=period;
+["daily","weekly","monthly"].forEach(x=>document.getElementById(x+"Tab")?.classList.toggle("active",x===period));
+let list=periodSales(period).filter(s=>!s.refunded);
+let revenue=list.reduce((a,s)=>a+Number(s.total),0);
+let profitKnown=list.every(s=>saleProfit(s).known);
+let profit=list.reduce((a,s)=>a+saleProfit(s).profit,0);
+let units=list.reduce((a,s)=>a+s.items.reduce((n,i)=>n+Number(i.quantity),0),0);
+let periodExpenses=expenses.filter(x=>{
+let d=new Date(x.date+"T00:00:00"),now=new Date();
+if(period==="daily")return sameDay(d,now);
+if(period==="monthly")return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth();
+let start=new Date(now);
+start.setHours(0,0,0,0);
+start.setDate(start.getDate()-((start.getDay()+6)%7));
+let end=new Date(start);
+end.setDate(end.getDate()+7);
+return d>=start&&d<end;
+}).reduce((a,x)=>a+Number(x.amount||0),0);
+let best={};
+list.forEach(s=>s.items.forEach(i=>best[i.name]=(best[i.name]||0)+Number(i.quantity)));
+let top=Object.entries(best).sort((a,b)=>b[1]-a[1])[0];
+
+document.getElementById("reportContent").innerHTML=`
+<div class="stats">
+<div class="card"><p>Revenue</p><h2>${money(revenue)}</h2></div>
+<div class="card"><p>Profit</p><h2>${profitKnown?money(profit):"Incomplete"}</h2></div>
+<div class="card"><p>Transactions</p><h2>${list.length}</h2></div>
+<div class="card"><p>Units Sold</p><h2>${units}</h2></div>
+<div class="card"><p>Expenses</p><h2>${money(periodExpenses)}</h2></div>
+<div class="card"><p>Estimated Net</p><h2>${profitKnown?money(profit-periodExpenses):"Incomplete"}</h2></div>
+<div class="card"><p>Best Seller</p><h2 style="font-size:16px">${esc(top?.[0]||"No sales")}</h2><span>${top?.[1]||0} units</span></div>
+</div>
+${profitKnown?"":'<div class="notice">Some older sales have no saved cost price, so profit is incomplete.</div>'}
+<p class="muted">Refunded sales are excluded from these totals.</p>`;
+}
+
+function csvCell(v){
+return '"'+String(v??"").replace(/"/g,'""')+'"';
+}
+
+function salesCSV(list){
+let rows=[["Sale ID","Date","Customer","Payment","Product","Quantity","Selling Price","Cost Price","Revenue","Profit","Discount","Total","Refunded"]];
+list.forEach(s=>(s.items||[]).forEach(i=>{
+let known=i.costPrice!=null&&Number.isFinite(Number(i.costPrice));
+rows.push([s.id,s.date,s.customerName,s.paymentMethod,i.name,i.quantity,i.price,known?i.costPrice:"Unknown",i.price*i.quantity,known?(i.price-i.costPrice)*i.quantity:"Unknown",s.discount||0,s.total,s.refunded?"Yes":"No"]);
+}));
+return "\uFEFF"+rows.map(r=>r.map(csvCell).join(",")).join("\r\n");
+}
+
+async function copyText(text){
+try{
+if(navigator.clipboard?.writeText){
+await navigator.clipboard.writeText(text);
+return true;
+}
+}catch(e){}
+let ta=document.createElement("textarea");
+ta.value=text;
+ta.style.position="fixed";
+ta.style.opacity="0";
+document.body.appendChild(ta);
+ta.focus();
+ta.select();
+let ok=false;
+try{ok=document.execCommand("copy")}catch(e){}
+ta.remove();
+if(ok)return true;
+showCSVModal(text);
+return false;
+}
+
+async function exportCSV(list,title){
+if(!list.length){alert("No sales records to export.");return}
+let text=salesCSV(list);
+try{
+if(navigator.share){
+await navigator.share({title,text});
+return;
+}
+}catch(e){
+if(e.name==="AbortError")return;
+}
+let ok=await copyText(text);
+if(ok)alert("CSV report copied. Open Excel or Google Sheets and paste it into a blank sheet.");
+}
+
+function exportCurrent(){
+exportCSV(periodSales(reportPeriod),"SmartPOS "+reportPeriod+" report");
+}
+
+function exportAll(){
+exportCSV(sales,"SmartPOS all sales");
+}
+
+function showCSVModal(text){
+document.getElementById("csvModal")?.remove();
+let m=document.createElement("div");
+m.id="csvModal";
+m.className="modal-overlay";
+m.innerHTML=`
+<div class="modal-box">
+<h3>Copy CSV Report</h3>
+<p class="muted">Select the text below, copy it, then paste into Excel or Google Sheets.</p>
+<textarea id="csvText" style="height:260px;width:100%;margin:12px 0;font:11px monospace"></textarea>
+<button class="gold-btn" onclick="document.getElementById('csvText').focus();document.getElementById('csvText').select()">Select All</button>
+<button class="dark-btn" onclick="document.getElementById('csvModal').remove()">Close</button>
+</div>`;
+document.body.appendChild(m);
+document.getElementById("csvText").value=text;
+}
+
+function expiryAlerts(){
+let today=new Date();
+today.setHours(0,0,0,0);
+return products.filter(p=>p.expiry).map(p=>{
+let d=new Date(p.expiry+"T00:00:00");
+return{...p,days:Math.ceil((d-today)/86400000)};
+}).filter(p=>p.days<=30).sort((a,b)=>a.days-b.days);
+}
+
+function customersPage(){
+setContent(`
+<div class="section">
+<h3>Add Customer</h3>
+<form onsubmit="addCustomer(event)">
+<div class="field-grid">
+<div><label>Customer name</label><input id="newCustomerName" required></div>
+<div><label>Phone number</label><input id="newCustomerPhone" type="tel" required></div>
+<div><label>Email (optional)</label><input id="newCustomerEmail" type="email"></div>
+</div>
+<button class="gold-btn">Save Customer</button>
+</form>
+</div>
+<div class="section">
+<h3>Customer Directory</h3>
+<input id="customerSearch" placeholder="Search name or phone" oninput="renderCustomers()">
+<div id="customerTable" class="table-wrap"></div>
+</div>`);
+renderCustomers();
+}
+
+function addCustomer(e){
+e.preventDefault();
+let name=document.getElementById("newCustomerName").value.trim();
+let phone=document.getElementById("newCustomerPhone").value.trim();
+let email=document.getElementById("newCustomerEmail").value.trim();
+if(customers.some(c=>c.phone===phone)){
+alert("A customer with this phone number already exists.");return;
+}
+customers.push({id:uid(),name,phone,email,created:new Date().toISOString()});
+saveData();
+logActivity("Added customer: "+name);
+customersPage();
+alert("Customer saved.");
+}
+
+function renderCustomers(){
+let el=document.getElementById("customerTable");
+if(!el)return;
+let q=(document.getElementById("customerSearch")?.value||"").toLowerCase();
+let list=customers.filter(c=>(c.name+" "+c.phone).toLowerCase().includes(q));
+el.innerHTML=list.length?`
+<table>
+<tr><th>Name</th><th>Phone</th><th>Email</th><th>Purchases</th><th>Total Spent</th><th>Action</th></tr>
+${list.map(c=>{
+let bought=sales.filter(s=>!s.refunded&&(s.customerPhone===c.phone||s.customerName===c.name));
+return `<tr><td>${esc(c.name)}</td><td>${esc(c.phone)}</td><td>${esc(c.email||"—")}</td><td>${bought.length}</td><td>${money(bought.reduce((a,s)=>a+Number(s.total||0),0))}</td><td><button class="red-btn" onclick="deleteCustomer(${c.id})">Delete</button></td></tr>`;
+}).join("")}
+</table>`:'<p class="empty">No customers saved yet. Customers entered during checkout will appear in sales history; add them here to create a directory record.</p>';
+}
+
+function deleteCustomer(id){
+if(!confirm("Delete this customer record? Sales history will remain."))return;
+customers=customers.filter(c=>c.id!==id);
+saveData();
+logActivity("Deleted a customer record");
+renderCustomers();
+}
+
+function expensesPage(){
+let total=expenses.reduce((a,x)=>a+Number(x.amount||0),0);
+setContent(`
+<div class="section">
+<h3>Record Business Expense</h3>
+<form onsubmit="addExpense(event)">
+<div class="field-grid">
+<div><label>Expense description</label><input id="expenseName" required placeholder="e.g. Shop rent"></div>
+<div><label>Amount (₦)</label><input id="expenseAmount" type="number" min="0.01" step=".01" required></div>
+<div><label>Category</label>
+<select id="expenseCategory">
+<option>Rent</option><option>Transport</option><option>Electricity</option><option>Salary</option><option>Internet</option><option>Repairs</option><option>Supplies</option><option>Other</option>
+</select>
+</div>
+<div><label>Date</label><input id="expenseDate" type="date" required value="${new Date().toISOString().slice(0,10)}"></div>
+</div>
+<button class="gold-btn">Save Expense</button>
+</form>
+</div>
+<div class="section">
+<h3>Total Recorded Expenses</h3>
+<h2>${money(total)}</h2>
+<div class="table-wrap">
+<table>
+<tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th>Action</th></tr>
+${expenses.slice().reverse().map(x=>`
+<tr><td>${esc(x.date)}</td><td>${esc(x.name)}</td><td>${esc(x.category)}</td><td>${money(x.amount)}</td>
+<td><button class="red-btn" onclick="deleteExpense(${x.id})">Delete</button></td></tr>`).join("")||'<tr><td colspan="5">No expenses recorded.</td></tr>'}
+</table>
+</div>
+</div>
+<div class="notice">Expenses are stored on this device. Record every business expense for a more useful profit estimate.</div>
+`);
+}
+
+function addExpense(e){
+e.preventDefault();
+let amount=Number(document.getElementById("expenseAmount").value);
+if(amount<=0){alert("Enter an amount above zero.");return}
+expenses.push({
+id:uid(),
+name:document.getElementById("expenseName").value.trim(),
+amount,
+category:document.getElementById("expenseCategory").value,
+date:document.getElementById("expenseDate").value
+});
+saveData();
+logActivity("Recorded expense: "+money(amount));
+expensesPage();
+alert("Expense recorded.");
+}
+
+function deleteExpense(id){
+if(!confirm("Delete this expense record?"))return;
+expenses=expenses.filter(x=>x.id!==id);
+saveData();
+logActivity("Deleted an expense record");
+expensesPage();
+}
+
+/* PHASE 3: LOGIN, EMPLOYEE ACCOUNTS, PERMISSIONS AND ACTIVITY TRACKING */
+
+function logActivity(action){
+if(!currentUser)return;
+activity.push({
+id:uid(),
+user:currentUser.username,
+role:currentUser.role,
+action,
+date:new Date().toLocaleString()
+});
+if(activity.length>500)activity=activity.slice(-500);
+saveData();
+}
+
+function renderLogin(){
+document.getElementById("loginOverlay").style.display="flex";
+document.getElementById("loginPassword").value="";
+document.getElementById("loginError").textContent="";
+}
+
+function login(e){
+e.preventDefault();
+let username=document.getElementById("loginUsername").value.trim().toLowerCase();
+let password=document.getElementById("loginPassword").value;
+let user=users.find(u=>u.username.toLowerCase()===username&&u.password===password&&u.active!==false);
+
+if(!user){
+document.getElementById("loginError").textContent="Incorrect username or password, or account is inactive.";
+return;
+}
+
+currentUser=user;
+document.getElementById("loginOverlay").style.display="none";
+document.getElementById("userChip").textContent=user.name+" · "+user.role;
+logActivity("Signed in");
+showPage("dashboard");
+}
+
+function logout(){
+if(currentUser)logActivity("Signed out");
+currentUser=null;
+document.getElementById("userChip").textContent="Signed out";
+renderLogin();
+}
+
+function employeesPage(){
+setContent(`
+<div class="section">
+<h3>Create Employee Account</h3>
+<form onsubmit="addEmployee(event)">
+<div class="field-grid">
+<div><label>Full name</label><input id="empName" required></div>
+<div><label>Username</label><input id="empUsername" required minlength="3"></div>
+<div><label>Temporary password</label><input id="empPassword" type="password" required minlength="4"></div>
+<div><label>Role</label>
+<select id="empRole"><option>Cashier</option><option>Manager</option><option>Admin</option></select>
+</div>
+</div>
+<button class="gold-btn">Create Account</button>
+</form>
+</div>
+
+<div class="section">
+<h3>Employee Accounts</h3>
+<div class="table-wrap">
+<table>
+<tr><th>Name</th><th>Username</th><th>Role</th><th>Status</th><th>Actions</th></tr>
+${users.map(u=>`
+<tr>
+<td>${esc(u.name)}</td><td>${esc(u.username)}</td><td>${esc(u.role)}</td>
+<td>${u.active===false?"Inactive":"Active"}</td>
+<td>${u.id!==currentUser.id?`
+<button class="small-btn" onclick="toggleEmployee(${u.id})">${u.active===false?"Activate":"Deactivate"}</button>
+<button class="red-btn" onclick="resetEmployeePassword(${u.id})">Reset password</button>
+`:"Current user"}</td>
+</tr>`).join("")}
+</table>
+</div>
+</div>
+
+<div class="section">
+<h3>Change My Password</h3>
+<form onsubmit="changeMyPassword(event)">
+<label>Current password</label>
+<input id="oldPassword" type="password" required>
+<label>New password (at least 4 characters)</label>
+<input id="newPassword" type="password" minlength="4" required>
+<button class="gold-btn">Change Password</button>
+</form>
+</div>
+
+<div class="section">
+<h3>Recent Activity</h3>
+<div style="max-height:300px;overflow:auto">
+${activity.slice().reverse().slice(0,50).map(a=>`
+<div class="activity-item">
+<b>${esc(a.user)}</b> (${esc(a.role)}) — ${esc(a.action)}<br>
+<span class="muted">${esc(a.date)}</span>
+</div>`).join("")||'<p class="empty">No activity recorded yet.</p>'}
+</div>
+</div>
+
+<div class="notice">
+Security note: this first version stores accounts in this browser only. It is useful for a single-device prototype, but it is not secure enough for sensitive business data or public internet deployment.
+</div>
+`);
+}
+
+function addEmployee(e){
+e.preventDefault();
+let name=document.getElementById("empName").value.trim();
+let username=document.getElementById("empUsername").value.trim().toLowerCase();
+let password=document.getElementById("empPassword").value;
+let role=document.getElementById("empRole").value;
+
+if(users.some(u=>u.username.toLowerCase()===username)){
+alert("That username is already in use.");return;
+}
+
+users.push({id:uid(),name,username,password,role,active:true});
+saveData();
+logActivity("Created employee account: "+username);
+employeesPage();
+alert("Employee account created.");
+}
+
+function toggleEmployee(id){
+let u=users.find(x=>x.id===id);
+if(!u)return;
+
+if(u.role==="Admin"&&users.filter(x=>x.role==="Admin"&&x.active!==false).length<=1&&u.active!==false){
+alert("Keep at least one active administrator.");return;
+}
+
+u.active=u.active===false;
+saveData();
+logActivity("Changed account status for "+u.username);
+employeesPage();
+}
+
+function resetEmployeePassword(id){
+let u=users.find(x=>x.id===id);
+if(!u)return;
+let p=prompt("Enter a temporary password for "+u.username+" (minimum 4 characters):");
+if(p===null)return;
+if(p.length<4){alert("Password must contain at least 4 characters.");return}
+u.password=p;
+saveData();
+logActivity("Reset password for "+u.username);
+alert("Password reset. Share it privately with the employee.");
+}
+
+function changeMyPassword(e){
+e.preventDefault();
+let old=document.getElementById("oldPassword").value;
+let next=document.getElementById("newPassword").value;
+
+if(currentUser.password!==old){
+alert("Current password is incorrect.");return;
+}
+if(next.length<4){
+alert("New password must be at least 4 characters.");return;
+}
+
+currentUser.password=next;
+let u=users.find(x=>x.id===currentUser.id);
+if(u)u.password=next;
+saveData();
+logActivity("Changed own password");
+employeesPage();
+alert("Password changed.");
+}
+
+function settingsPage(){
+setContent(`
+<div class="section">
+<h3>Tax & Business Settings</h3>
+<p class="muted">Set the VAT rate used for new checkouts. The default shown is 7.5%; confirm the correct tax treatment for your business with a qualified tax adviser.</p>
+<form onsubmit="saveSettings(event)">
+<label>VAT rate (%)</label>
+<input id="vatRate" type="number" min="0" max="100" step=".01" value="${Number(settings.vatRate??7.5)}">
+<label style="display:flex;align-items:center;gap:9px;margin:8px 0 15px">
+<input id="vatEnabled" type="checkbox" style="width:auto;margin:0" ${settings.vatEnabled?'checked':''}>
+Add VAT to new sales
+</label>
+<button class="gold-btn">Save Settings</button>
+</form>
+</div>
+<div class="notice">VAT is added on top of the discounted subtotal when enabled. This is a simple checkout calculation, not tax filing or a guarantee that VAT applies to every product or business.</div>
+<div class="section">
+<h3>Phase 2 Data</h3>
+<p>Customers: ${customers.length} | Expenses: ${expenses.length} | Products with expiry dates: ${products.filter(p=>p.expiry).length}</p>
+<p class="muted">Your existing Phase 1 products and sales are preserved.</p>
+</div>
+`);
+}
+
+function saveSettings(e){
+e.preventDefault();
+let rate=Number(document.getElementById("vatRate").value);
+if(rate<0||rate>100){alert("Enter a VAT rate between 0 and 100.");return}
+settings={vatRate:rate,vatEnabled:document.getElementById("vatEnabled").checked};
+saveData();
+logActivity("Updated business settings");
+settingsPage();
+alert("Settings saved. VAT will apply to new checkouts only.");
+}
+
+async function startScanner(){
+if(!("BarcodeDetector"in window)){
+alert("Barcode scanning is not supported in this browser. You can still type or scan into the barcode field using a USB/Bluetooth scanner.");
+return;
+}
+try{
+let detector=new BarcodeDetector({formats:["ean_13","ean_8","upc_a","upc_e","code_128","code_39","qr_code"]});
+scannerStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});
+let box=document.getElementById("scannerBox");
+let video=document.getElementById("scannerVideo");
+box.style.display="block";
+video.srcObject=scannerStream;
+await video.play();
+
+let scan=async()=>{
+if(!scannerStream)return;
+try{
+let codes=await detector.detect(video);
+if(codes.length){
+let input=document.getElementById("quickFind");
+input.value=codes[0].rawValue;
+quickAdd();
+stopScanner();
+return;
+}
+}catch(e){}
+requestAnimationFrame(scan);
+};
+scan();
+}catch(e){
+alert("Could not open camera. Check camera permission and try again.");
+}
+}
+
+function stopScanner(){
+if(scannerStream){
+scannerStream.getTracks().forEach(t=>t.stop());
+scannerStream=null;
+}
+let v=document.getElementById("scannerVideo");
+if(v)v.srcObject=null;
+let b=document.getElementById("scannerBox");
+if(b)b.style.display="none";
+}
+
+window.addEventListener("online",()=>{
+document.getElementById("connectionBadge").textContent="ONLINE";
+});
+
+window.addEventListener("offline",()=>{
+document.getElementById("connectionBadge").textContent="OFFLINE READY";
+});
+
+document.getElementById("connectionBadge").textContent=navigator.onLine?"ONLINE":"OFFLINE READY";
+renderLogin();
+
+</script>
+</body>
+</html>
